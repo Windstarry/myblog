@@ -11,6 +11,7 @@ from flask import Flask
 from config import config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config.from_object(config['development'])
@@ -18,5 +19,7 @@ app.config.from_object(config['development'])
 db = SQLAlchemy(app)
 #迁移引擎对象
 migrate = Migrate(app, db)
+login = LoginManager(app)
+login.login_view = 'login'
 #导入一个新模块models，它将定义数据库的结构，目前为止尚未编写
 from app import views,models
