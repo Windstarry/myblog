@@ -21,5 +21,5 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
-#导入一个新模块models，它将定义数据库的结构，目前为止尚未编写
+#导入一个新模块models，它将定义数据库的结构
 from app import views,models

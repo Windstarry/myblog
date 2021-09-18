@@ -27,6 +27,6 @@ def make_shell_context():
 
 if __name__ == '__main__':
     #开发者模式
-    app.run(debug=False)
+    app.run(debug=True)
     #非开发者模式
     # manager.run()   

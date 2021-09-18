@@ -1,0 +1,3 @@
+FLASK_APP=manage.py
+#设置flask运行环境为development
+FLASK_ENV=development
