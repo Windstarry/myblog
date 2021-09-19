@@ -9,8 +9,8 @@
 # here put the import lib
 from flask_wtf import FlaskForm#
 #导入这些类
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,TextAreaField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import User
 
 class LoginForm(FlaskForm):
@@ -38,3 +38,9 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('电子邮箱已注册，请更换邮箱')
+
+
+class EditProfileForm(FlaskForm):
+	username = StringField('用户名', validators=[DataRequired()])
+	about_me = TextAreaField('我的简介', validators=[Length(min=0, max=140)])
+	submit = SubmitField('提交')
