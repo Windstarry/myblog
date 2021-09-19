@@ -28,7 +28,8 @@ class BaseConfig(object):
     SQLALCHEMY_POOL_SIZE=10
     #指定数据库连接池的超时时间
     SQLALCHEMY_POOL_TIMEOUT=10
-
+    #确定每页显示多少个项目数
+    POSTS_PER_PAGE = 5
 
 class DevelopmentConfig(BaseConfig):
     #数据库连接格式
