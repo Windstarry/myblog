@@ -12,6 +12,8 @@ from config import config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from logging.handlers import RotatingFileHandler
+import os
 
 app = Flask(__name__)
 app.config.from_object(config['development'])
@@ -22,4 +24,4 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 #导入一个新模块models，它将定义数据库的结构
-from app import views,models
+from app import views,models,errors
