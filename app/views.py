@@ -80,7 +80,7 @@ def register():
         db.session.commit()
         flash('恭喜您已经注册成功')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', title='注册', form=form)
 
 
 @app.route('/user/<username>')
@@ -102,13 +102,40 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Your changes have been saved.')
-        return redirect(url_for('edit_profile'))
+        flash('你的修改已提交')
+        return redirect(url_for('user',username = current_user.username))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Edit Profile', form=form)
+    return render_template('edit_profile.html', title='编辑个人信息', form=form)
 
+
+@app.route('/follow/<username>')
+def follow(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    if user is None:
+        flash("未找到该用户")
+        return redirect(url_for('index'))
+    if current_user.is_following(user):
+        flash('已关注该用户')
+        return redirect(url_for('user',username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash("关注{}".format(username))
+    return redirect(url_for('user',username=username))
+
+
+@app.route('/unfollow/<username>')
+def unfollow(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    if user is None:
+        flash("未找到该用户")
+        return redirect(url_for('index'))
+    if current_user.is_following(user):
+        current_user.unfollow(user)
+        db.session.commit()
+        flash("取消关注{}".format(username))
+        return redirect(url_for('user',username=username))
 
 
 @app.before_request

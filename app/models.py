@@ -47,7 +47,7 @@ class User(UserMixin,db.Model):
                                 backref=db.backref('followers', lazy='dynamic'),
                                 lazy='dynamic'
                                 )
-    
+
     def __repr__(self):
 		#return '<User {}>'.format(self.username)
         return '<User {}, Email {}, Password_Hash {}, Posts {}'.format(self.username, self.email, self.password_hash, self.posts)
@@ -66,6 +66,7 @@ class User(UserMixin,db.Model):
         if not self.is_following(user):
             self.followed.append(user)
 
+
     def unfollow(self, user):
         if self.is_following(user):
             self.followed.remove(user)
@@ -73,6 +74,7 @@ class User(UserMixin,db.Model):
 
     def is_following(self, user):
         return self.followed.filter(followers.c.followed_id==user.id).count()>0
+
 
     def followed_posts(self):
         followed = Post.query.join(followers, (followers.c.followed_id == Post.user_id)).filter(followers.c.follower_id == self.id)
