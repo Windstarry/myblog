@@ -11,7 +11,7 @@ from os import abort
 from app import app,db
 from flask import render_template, flash, redirect, url_for
 from flask import request
-from app.forms import LoginForm,RegistrationForm,EditProfileForm,PostForm
+from app.forms import LoginForm,RegistrationForm,EditProfileForm,PostForm,EditPostForm
 from flask_login import current_user, login_user,logout_user,login_required
 from werkzeug.urls import url_parse
 from app.models import User, Post
@@ -104,10 +104,8 @@ def user(username):
     next_url = url_for('user', username=user.username, page=posts.next_num) if posts.has_next else None
     prev_url = url_for('user', username=user.username, page=posts.prev_num) if posts.has_prev else None
     return render_template('user.html', user=user, posts=posts.items, next_url=next_url, prev_url=prev_url)
-    
-    
-    posts = user.followed_posts().all()
-    return render_template('user.html', user=user, posts=posts)
+    # posts = user.followed_posts().all()
+    # return render_template('user.html', user=user, posts=posts)
 
 
 @app.route('/edit_profile',methods=['GET','POST'])
@@ -152,6 +150,31 @@ def unfollow(username):
         db.session.commit()
         flash("取消关注{}".format(username))
         return redirect(url_for('user',username=username))
+
+
+@app.route('/post/<int:id>')
+def post(id):
+    post = Post.query.get_or_404(id)
+    return render_template('post.html',posts = [post])
+
+
+@app.route('/edit_post/<int:id>', methods = ['GET','POST'])
+@login_required
+def edit_post(id):
+    post = Post.query.get_or_404(id)
+    if current_user.id != post.user_id :
+        abort(403)
+    form = EditPostForm()
+    if form.validate_on_submit():
+        post.body = form.body.data
+        db.session.add(post)
+        db.session.commit()
+        flash('文章已更新')
+        return redirect(url_for('post',id = post.id))
+    elif request.method == 'GET':
+        form.body.data = post.body
+        return render_template('edit_post.html', form=form)
+
 
 
 @app.before_request

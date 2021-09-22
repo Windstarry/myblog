@@ -42,7 +42,7 @@ class RegistrationForm(FlaskForm):
 
 class EditProfileForm(FlaskForm):
 	username = StringField('用户名', validators=[DataRequired()])
-	about_me = TextAreaField('我的简介', validators=[Length(min=0, max=140)])
+	about_me = TextAreaField('我的简介', validators=[Length(min=0, max=256)])
 	submit = SubmitField('提交')
 
     #验证用户名
@@ -59,5 +59,10 @@ class EditProfileForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    post = TextAreaField('记录', validators=[DataRequired(), Length(min=1, max=140)])
+    post = TextAreaField('记录', validators=[DataRequired(), Length(min=1, max=256)])
+    submit = SubmitField('提交')
+
+
+class EditPostForm(FlaskForm):
+    body = TextAreaField('帖子内容', validators=[Length(min=0, max=256)])
     submit = SubmitField('提交')
