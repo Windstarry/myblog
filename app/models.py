@@ -29,7 +29,7 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
-    about_me = db.Column(db.String(140))
+    about_me = db.Column(db.String(256))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     '''
     User 是关系的右侧实体（左侧是父类），由于这是一种自引用关系，必须在两边使用相同的类。
@@ -52,9 +52,15 @@ class User(UserMixin,db.Model):
 		#return '<User {}>'.format(self.username)
         return '<User {}, Email {}, Password_Hash {}, Posts {}'.format(self.username, self.email, self.password_hash, self.posts)
     
-    def set_password(self, password):
+    @property
+    def password(self, password):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
         self.password_hash = generate_password_hash(password)
     
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -82,15 +88,56 @@ class User(UserMixin,db.Model):
         return followed.union(own).order_by(Post.timestamp.desc())
 
 
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        from random import seed
+        import forgery_py
+
+        seed()
+        for i in range(count):
+            u = User(
+                email = forgery_py.internet.email_address(), 
+                username = forgery_py.internet.user_name(), 
+                password = forgery_py.lorem_ipsum.word(),
+                about_me = forgery_py.lorem_ipsum.sentence(), 
+                last_seen = forgery_py.date.date(True),
+            )
+            db.session.add(u)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
+    body = db.Column(db.String(256))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     #user_id字段已作为一个外键初始化了，这表明它引用了users表中的id值
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     def __repr__(self):
         return '<Post {}'.format(self.body)
 
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import seed,randint
+        import forgery_py
+        seed()
+        #查询用户表报过的id
+        user_count = User.query.count()
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count-1)).first()
+            p = Post(
+                body = forgery_py.lorem_ipsum.sentence(),  
+                timestamp = forgery_py.date.date(True),
+                user_id = u.id
+            )
+            db.session.add(p)
+            db.session.commit()
+
+    
 
 @login.user_loader
 def load_user(id):
