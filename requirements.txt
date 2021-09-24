@@ -11,3 +11,4 @@ Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1
 email-validator==1.0.5
 forgerypy
+flask-mail

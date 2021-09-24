@@ -16,7 +16,9 @@ from flask_login import current_user, login_user,logout_user,login_required
 from werkzeug.urls import url_parse
 from app.models import User, Post
 from datetime import datetime
-
+from app.forms import ResetPasswordRequestForm
+from app.email import send_password_reset_email
+from app.forms import ResetPasswordForm
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -53,8 +55,7 @@ def login():
     此变量的值可以是数据库中的用户的对象Flask-Login通过上述提供的用户加载器回调读取的,
     如果用户尚未登录，则可以是特殊的匿名用户对象
     is_authenticated可以方便地检查用户是否登录,当用户已经登录时，只需重定向到/index页面
-    '''
-    
+    '''   
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -91,6 +92,37 @@ def register():
         flash('恭喜您已经注册成功')
         return redirect(url_for('login'))
     return render_template('register.html', title='注册', form=form)
+
+
+@app.route('/reset_password_request', methods=['GET','POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            #发送密码重置电子邮件
+            send_password_reset_email(user)
+        flash('登录邮箱查看链接重置密码')
+        return redirect(url_for('login'))
+    return render_template('reset_password_request.html', title='重置密码', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('密码已重置')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form)
 
 
 @app.route('/user/<username>')

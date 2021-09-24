@@ -66,3 +66,13 @@ class PostForm(FlaskForm):
 class EditPostForm(FlaskForm):
     body = TextAreaField('帖子内容', validators=[Length(min=0, max=256)])
     submit = SubmitField('提交')
+
+
+class ResetPasswordRequestForm(FlaskForm):
+	email = StringField('Email', validators=[DataRequired(), Email()])
+	submit = SubmitField('重置密码')
+
+class ResetPasswordForm(FlaskForm):
+	password = PasswordField('Password', validators=[DataRequired()])
+	password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+	submit = SubmitField('重置密码')

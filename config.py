@@ -30,6 +30,13 @@ class BaseConfig(object):
     SQLALCHEMY_POOL_TIMEOUT=10
     #确定每页显示多少个项目数
     POSTS_PER_PAGE = 20
+    #增加邮箱基本信息
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS')
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'false').lower() in ['true', 'on', '1']
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')#客户端授权密码
 
 class DevelopmentConfig(BaseConfig):
     #数据库连接格式
