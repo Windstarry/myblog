@@ -12,3 +12,4 @@ Flask-WTF==0.15.1
 email-validator==1.0.5
 forgerypy
 flask-mail
+pyjwt

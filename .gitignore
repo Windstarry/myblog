@@ -113,3 +113,5 @@ logs/*
 uploads/*
 !uploads/.gitkeep
 migrations/versions/2e9cd331efa5_.py
+migrations/
+.migrations
