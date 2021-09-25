@@ -19,7 +19,9 @@
 					<span aria-hidden="true">&larr;</span>上一页</a>
 			</li>
 			<li class="next{% if not next_url %} disabled{% endif %}">
-				<a href="{{ next_url or '#' }}">下一页<span aria-hidden="true">&rarr;</span></a>
+				<a href="{{ next_url or '#' }}">
+					下一页<span aria-hidden="true">&rarr;</span>
+				</a>
 			</li>
 		</ul>
 	</nav>
