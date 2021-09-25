@@ -1,41 +1,54 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <table>
-		<tr valign="top">
-			<td><img src="{{ user.avatar(128) }}"></td>
+{% block app_content %}
+	<table class="table table-hover">
+		<tr>
+			<td width="256px"><img src="{{ user.avatar(150) }}"></td>
 			<td>
-                <h1>用户:{{ user.username }}</h1>
-                {% if user.about_me %}
-                    <p>{{ user.about_me }}</p>
-                {% endif %}
-                {% if user.last_seen %}
-                    <p>最后登录时间:{{ user.last_seen }}</p>
-                {% endif %}
-                {% if user == current_user %}
-                    <p>
-                        <a href="{{ url_for('edit_profile') }}">编辑个人信息</a>
-                    </p>
-                {% elif not current_user.is_following(user) %}
+				<h1>用户:{{ user.username }}</h1>
+				{% if user.about_me %}
+					<p>{{ user.about_me }}</p>
+				{% endif %}
+
+				{% if user.last_seen %}
+					<p>最后登录时间:{{ user.last_seen }}</p>
+				{% endif %}
+
+				{% if user == current_user %}
+					<p>
+						<a href="{{ url_for('edit_profile') }}">编辑个人信息</a>
+					</p>
+
+				{% elif not current_user.is_following(user) %}
 					<p>
 						<a href="{{ url_for('follow', username=user.username) }}">关注</a>
 					</p>
+
 				{% else %}
 					<p>
 						<a href="{{ url_for('unfollow', username=user.username) }}">取消关注</a>
 					</p>
-                {% endif %}
-            </td>
+				{% endif %}
+			</td>
 		</tr>
 	</table>
-	<hr>
+
 	{% for post in posts %}
-        {% include '_post.html' %}
+		{% include '_post.html' %}
 	{% endfor%}
-    {% if prev_url %}
-		<a href="{{ prev_url }}">上一页</a>
-	{% endif %}
-	{% if next_url %}
-		<a href="{{ next_url }}">下一页</a>
-	{% endif %}
+
+	<nav aria-label="...">
+		<ul class="pager">
+			<li class="previous{% if not prev_url %} disabled{% endif %}">
+				<a href="{{ prev_url or '#' }}">
+					<span aria-hidden="true">&larr;</span> 上一页
+				</a>
+			</li>
+			<li class="next{% if not next_url %} disabled{% endif %}">
+				<a href="{{ next_url or '#' }}">
+					下一页 <span aria-hidden="true">&rarr;</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
 {% endblock%}

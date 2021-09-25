@@ -1,20 +1,26 @@
-<table>
-    <tr valign="top">
-        <td><img src="{{ post.author.avatar(36) }}"></td>
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('user', username=post.author.username) }}">
+                <img src="{{ post.author.avatar(40) }}" />
+            </a>
+        </td>
         <td>
             <a href="{{ url_for('user', username=post.author.username) }}">
-            {{ post.author.username }}</a> 发表:
-                    <span>{{post.timestamp}}</span>
-                    <a href="{{ url_for('post',id=post.id) }}">
-                        <small><span class = 'label label-default'>文章链接</span></small>
-                    </a>
-                    {% if current_user.id == post.user_id %}
-                        <a href="{{ url_for('edit_post',id=post.id) }}">
-                            <small><span class = 'label label-default'>编辑</span></small>
-                        </a>  
-                    {% endif %}
+                {{ post.author.username }}
+            </a>
+            <span>{{post.timestamp}}</span>
+                <a href="{{ url_for('post',id=post.id) }}">
+                    <small><span class = 'label label-default'>文章链接</span></small>
+                </a>
+                {% if current_user.id == post.user_id %}
+                    <a href="{{ url_for('edit_post',id=post.id) }}">
+                        <small><span class = 'label label-default'>编辑</span></small>
+                    </a>  
+                {% endif %}
+            发表:
             <br>
-            <div>{{ post.body }}</div>
+            {{ post.body }}
         </td>
     </tr>
 </table>

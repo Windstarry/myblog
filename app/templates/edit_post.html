@@ -1,19 +1,11 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block title%}我的博客 - 编辑帖子{% endblock %}
-{% block content %}
+{% block app_content %}
     <h1>编辑帖子</h1>
-    <form action="", method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.body.label }}<br>
-                {{ form.body(cols=50, rows=4) }}<br>
-                {% for error in form.body.errors %}
-                    <span style="color:red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.submit() }}
-            </p>
-        </form>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
 {% endblock %}
