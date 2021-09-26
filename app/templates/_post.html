@@ -9,7 +9,7 @@
             <a href="{{ url_for('user', username=post.author.username) }}">
                 {{ post.author.username }}
             </a>
-            <span>{{post.timestamp}}</span>
+            <span>{{ moment(post.timestamp).fromNow() }}</span>
                 <a href="{{ url_for('post',id=post.id) }}">
                     <small><span class = 'label label-default'>文章链接</span></small>
                 </a>

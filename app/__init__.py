@@ -17,6 +17,7 @@ from logging.handlers import RotatingFileHandler
 import os
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
+from flask_moment import Moment
 
 app = Flask(__name__)
 app.config.from_object(config['development'])
@@ -32,7 +33,7 @@ login.login_view = 'login'
 
 mail = Mail(app)
 bootstrap = Bootstrap(app)
-
+moment = Moment(app)
 #导入一个新模块models，它将定义数据库的结构
 from app import views,models,errors
 
