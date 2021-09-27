@@ -11,14 +11,19 @@ from os import abort
 from app import app,db
 from flask import render_template, flash, redirect, url_for
 from flask import request
+from flask import g
 from app.forms import LoginForm,RegistrationForm,EditProfileForm,PostForm,EditPostForm
 from flask_login import current_user, login_user,logout_user,login_required
 from werkzeug.urls import url_parse
+from flask_babel import _
+from flask_babel import get_locale
 from app.models import User, Post
 from datetime import datetime
 from app.forms import ResetPasswordRequestForm
 from app.email import send_password_reset_email
 from app.forms import ResetPasswordForm
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -29,7 +34,7 @@ def index():
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash('你的记录已发表')
+        flash(_('你的记录已发表'))
         return redirect(url_for('index'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page, app.config['POSTS_PER_PAGE'], False)
@@ -160,14 +165,14 @@ def edit_profile():
 def follow(username):
     user = User.query.filter_by(username=username).first_or_404()
     if user is None:
-        flash("未找到该用户")
+        flash(_('用户 %(username)s 未找到', username=username))
         return redirect(url_for('index'))
     if current_user.is_following(user):
-        flash('已关注该用户')
+        flash(_('用户 %(username)s 已关注', username=username))
         return redirect(url_for('user',username=username))
     current_user.follow(user)
     db.session.commit()
-    flash("关注{}".format(username))
+    flash(_('关注用户 %(username)s', username=username))
     return redirect(url_for('user',username=username))
 
 
@@ -214,5 +219,7 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+    #g.locale = str(get_locale())
+    g.locale = 'zh_CN' if str(get_locale()).startswith('zh') else str(get_locale())
 
     

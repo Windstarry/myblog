@@ -14,6 +14,8 @@ class BaseConfig(object):
     """项目配置核心类"""
     #调试模式
     DEBUG=True
+    #注意：不要填写zh_CN。有坑
+    LANGUAGES = ['en', 'zh']
     # 配置日志
     # LOG_LEVEL = "DEBUG"
     LOG_LEVEL = "INFO"

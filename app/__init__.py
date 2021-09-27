@@ -8,6 +8,7 @@
 '''
 # here put the import lib
 from flask import Flask
+from flask import request
 from config import config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -18,6 +19,8 @@ import os
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_babel import Babel,lazy_gettext as _l
+
 
 app = Flask(__name__)
 app.config.from_object(config['development'])
@@ -30,10 +33,17 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
+login.login_message = _l("请登录访问")
 
 mail = Mail(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+babel = Babel(app)
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
 #导入一个新模块models，它将定义数据库的结构
 from app import views,models,errors
 

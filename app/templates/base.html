@@ -55,5 +55,6 @@
 	{% block scripts %}
 		{{ super() }}
 		{{ moment.include_moment() }}
+		{{ moment.lang(g.locale) }}
 	{% endblock %}
 </html>
