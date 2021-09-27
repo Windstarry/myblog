@@ -10,6 +10,7 @@
 from app import app, db
 from flask_script import Manager
 from app.models import User, Post
+from app import cli
 
 manager = Manager(app)
 
